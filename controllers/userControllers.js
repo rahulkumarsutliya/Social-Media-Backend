@@ -31,7 +31,7 @@ const toggleFollow = async (req, resp) => {
 
     resp.status(200).json({ message: isFollowing ? "Unfollowed" : "Followed" });
   } catch (err) {
-    resp.status(500).json({ error: 'Something went wrong' });
+    resp.status(500).json({ message:err.message || 'Something went wrong' });
   }
 };
 

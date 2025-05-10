@@ -18,7 +18,7 @@ exports.createPost = async (req, resp) => {
         await post.save();
         resp.status(201).json({ message: 'Post created', post });
     } catch (err) {
-        resp.status(500).json({ message: 'Failed to create post', error: err.message });
+        resp.status(500).json({ message: err.message || 'Failed to create post'});
     }
 };
 
@@ -37,7 +37,7 @@ exports.getAllPosts = async (req, resp) => {
         .sort({ createdAt: -1 })
         .skip(skip)
         .limit(limit)
-        .populate('userId', 'username');
+        .populate('userId', 'username ');
   
       resp.status(200).json({
         currentPage: page,
@@ -47,7 +47,7 @@ exports.getAllPosts = async (req, resp) => {
         posts
       });
     } catch (err) {
-        resp.status(500).json({ message: 'Failed to fetch posts', error: err.message });
+        resp.status(500).json({ message: err.message || 'Failed to fetch posts' });
     }
 };
 
@@ -82,7 +82,7 @@ exports.likeOrUnlikePost = async (req, resp) => {
         await post.save();
         resp.status(200).json({ message: alreadyLiked ? 'Unliked' : 'Liked', post });
     } catch (err) {
-        resp.status(500).json({ message: 'Failed to like/unlike post', error: err.message });
+        resp.status(500).json({ message:err.message || 'Failed to like/unlike post' });
     }
 };
 
@@ -103,7 +103,7 @@ exports.commentOnPost = async (req, resp) => {
 
         resp.status(201).json({ message: 'Comment added', post });
     } catch (err) {
-        resp.status(500).json({ message: 'Failed to comment', error: err.message });
+        resp.status(500).json({ message:err.message || 'Failed to comment' });
     }
 };
 
@@ -113,6 +113,6 @@ exports.getPostsByUser = async (req, resp) => {
         const posts = await Post.find({ userId: req.params.id }).sort({ createdAt: -1 });
         resp.status(200).json(posts);
     } catch (err) {
-        resp.status(500).json({ message: 'Error fetching user posts', error: err.message });
+        resp.status(500).json({ message:err.message || 'Error fetching user posts' });
     }
 }; 

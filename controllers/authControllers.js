@@ -27,9 +27,9 @@ exports.register = async (req, resp) => {
            {expiresIn: process.env.JWT_EXPIRES_IN}
         );
 
-        resp.status(201).json({ message: 'User registered successfully',token, user: newUser });
+        resp.status(201).json({ message: 'User registered successfully',data:{token, user: newUser} });
     } catch (err) {
-        resp.status(500).json({ message: 'Error registering user', error: err.message });
+        resp.status(500).json({ message:err?.message || 'Error registering user' });
     }
 };
 
@@ -57,7 +57,7 @@ exports.login = async (req, resp) => {
 
         resp.status(200).json({ message: 'Login successful', token });
     } catch (err) {
-        resp.status(500).json({ message: 'Error logging in', error: err.message });
+        resp.status(500).json({ message:err?.message || 'Error logging in' });
     }
 };
 
