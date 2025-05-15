@@ -1,22 +1,34 @@
 const jwt = require('jsonwebtoken');
 
-const authenticate = (req, resp, next) => {
+const authenticate = async(req, resp, next) => {
   const authHeader = req.headers.authorization;
-  
 
-  if (authHeader && authHeader.startsWith('Bearer ')) {
+  try {
+
+    if (!authHeader) {
+      return resp.status(401).send({ message: "Authorization header is missing" });
+    }
+
+    if (!authHeader.startsWith('Bearer')) {
+      return  resp.status(401).send({ message: "Invalid authorizaton format. Expected Bearer token" });
+    }
+
     const token = authHeader.split(' ')[1];
 
-    try {
-      const decoded = jwt.verify(token, process.env.JWT_SECRET);
-      req.user = decoded; 
-      next();
-    } catch (err) {
-      return resp.status(401).json({ message: 'Invalid token' });
+    if (!token) {
+      return resp.status(401).send({ message: "Token is missing in header" });
     }
-  } else {
-    return resp.status(401).json({ message: 'No token provided' });
+
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    req.user = decoded;
+
+    next();
+
+  } catch (err) {
+    return resp.status(401).send({ message: err.message || "Inavlid or Expired token" });
   }
+
+
 };
 
 module.exports = authenticate;
